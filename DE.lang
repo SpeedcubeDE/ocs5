@@ -1,0 +1,86 @@
+system.internalError=Serverfehler
+system.stop=Server beendet
+system.logout.differentLocation=Gekickt: Login von einem anderen Ort!
+
+
+
+login.fail=Login fehlgeschlagen
+
+
+
+command.unknown=Unbekannter Befehl: {1}
+command.insufficientPower=Nicht genug Rechte für diesen Befehl!
+command.userNotFound=Konnte {1} nicht finden.
+command.numberFormat={1} ist keine gültige Zahl.
+
+command.setRank.error.rank=Der Rang {1} existiert nicht.
+command.setRank.error=Konnte Userrang nicht ändern.
+command.setRank.change={1} hat jetzt den Rang {2}.
+
+command.setPower.error=Konnte Userpower nicht ändern.
+command.setPower.change={1} hat jetzt das Rechtelevel {2}.
+
+command.saveAll.saved=Saved All! ({1})
+
+command.mute.muted={1} wurde für {2} gemutet.
+command.mute.error=Konnte {1} nicht muten.
+
+command.kick.kicked={1} wurde gekickt.
+command.kick.kickedAlert=Du wurdest gekickt: {1}
+command.kick.error=Konnte {1} nicht kicken.
+
+command.config.change={1} wurde auf {2} gesetzt.
+command.config.error=Konnte Config {1} nicht ändern.
+
+command.permission.change={1} wurde auf {2} gesetzt.
+command.permission.error=Konnte Permission {1} nicht ändern.
+command.permission.error.find=Konnte Permission {1} nicht finden.
+
+command.ban.bannedAlert=Du wurdest gebannt: {1}
+command.ban.banned={1} wurde gebannt: {2}
+
+command.nameColor.color=Deine Namensfarbe ist {1}.
+command.nameColor.noColor={1} ist keine gültige Farbe.
+
+command.sound.played={1} abgespielt.
+command.sound.userPlayed={1} für {2} abgespielt.
+
+command.command.change=Command minPower von {1} auf {2} geändert.
+command.command.error.find=Konnte Command {1} nicht finden.
+
+command.userpool.clear.cleared=Userpool geleert: {1} -> {2} ({3} gelöscht).
+
+command.status.error.tooLong=Status zu lang, bitte maximal {1} Zeichen verwenden.
+
+
+
+chat.shell.name=magische miesmuschel
+
+chat.spam.prevent=Zu viele Chat Nachrichten!
+
+chat.mute.prevent=Du bist noch {1} gemutet!
+chat.mute.muted=Du wurdest für {1} gemutet, Grund: {2}
+
+chat.room.error.nameLength=Chatraum Namen dürfen maximal 32 Zeichen lang sein.
+chat.room.error.create=Konnte Chatraum nicht erstellen.
+chat.room.error.enter=Konnte Chatraum nicht betreten.
+chat.room.error.leave=Konnte Chatraum nicht verlassen.
+chat.room.error.delete=Konnte Chatraum nicht löschen.
+chat.room.enter={1} hat den Raum betreten.
+chat.room.leave={1} hat den Raum verlassen.
+
+
+
+party.error.name=Parties müssen einen Namen haben.
+party.error.rounds=Partys bitte mit 1 bis {1} Runden erstellen.
+party.error.create=Konnte Party nicht erstellen.
+party.error.enter=Konnte Party nicht betreten.
+party.error.leave=Konnte Party nicht verlassen.
+party.error.start=Konnte Party nicht starten.
+party.error.time=Konnte Zeit nicht verarbeiten.
+party.error.delete=Konnte Party nicht löschen.
+party.error.scrambleLimit=So viele Scrambles brauchst du garnicht!
+
+
+
+user.error.findID=Konnte User mit der id: {1} nicht finden.
