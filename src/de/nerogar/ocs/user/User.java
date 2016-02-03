@@ -169,13 +169,13 @@ public class User extends Sendable {
 		initClient();
 
 		//enter main rooms
-		OCSServer.chatRoomManager.enterChatRoom(this, 1, "");
-
 		for (ChatRoom chatRoom : OCSServer.chatRoomManager.getAvailableRooms(this)) {
 			if (chatRoom.hasUser(this)) {
 				chatRoom.addUser(this);
 			}
 		}
+
+		OCSServer.chatRoomManager.enterChatRoom(this, 1, ""); //do this after entering all rooms to prevent double messages
 
 		//log login
 		if (!wasLoggedIn) {
