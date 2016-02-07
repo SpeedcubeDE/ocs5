@@ -131,8 +131,9 @@ public class ParseParty extends Parse {
 		if (!validate(jsonData, partyStructureEnter)) return;
 
 		int partyID = ((Long) jsonData.get("partyID")).intValue();
+		Party party = OCSServer.partyContainer.getParty(partyID);
 
-		if (!OCSServer.partyContainer.getParty(partyID).addUser(getUser())) {
+		if (party == null || !party.addUser(getUser())) {
 			new Alert(Alert.ERROR, false, OCSStrings.getString("party.error.enter")).sendTo(getUser());
 		}
 	}
@@ -141,8 +142,9 @@ public class ParseParty extends Parse {
 		if (!validate(jsonData, partyStructureLeave)) return;
 
 		int partyID = ((Long) jsonData.get("partyID")).intValue();
-
-		if (!OCSServer.partyContainer.getParty(partyID).removeUser(getUser())) {
+		Party party = OCSServer.partyContainer.getParty(partyID);
+		
+		if (party == null || !OCSServer.partyContainer.getParty(partyID).removeUser(getUser())) {
 			new Alert(Alert.ERROR, false, OCSStrings.getString("party.error.leave")).sendTo(getUser());
 		}
 	}
@@ -151,8 +153,9 @@ public class ParseParty extends Parse {
 		if (!validate(jsonData, partyStructureStart)) return;
 
 		int partyID = ((Long) jsonData.get("partyID")).intValue();
-
-		if (!OCSServer.partyContainer.getParty(partyID).start(getUser())) {
+		Party party = OCSServer.partyContainer.getParty(partyID);
+		
+		if (party == null || !OCSServer.partyContainer.getParty(partyID).start(getUser())) {
 			new Alert(Alert.ERROR, false, OCSStrings.getString("party.error.start")).sendTo(getUser());
 		}
 	}
@@ -161,7 +164,7 @@ public class ParseParty extends Parse {
 		if (!validate(jsonData, partyStructureRemove)) return;
 
 		int partyID = ((Long) jsonData.get("partyID")).intValue();
-
+		
 		if (!OCSServer.partyContainer.removeParty(partyID, getUser())) {
 			new Alert(Alert.ERROR, false, OCSStrings.getString("party.error.delete")).sendTo(getUser());
 		}
