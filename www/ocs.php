@@ -67,7 +67,7 @@ $ip = htmlentities($ip);
 			</div>
 		</div>
 		<div id="timer">
-			<a href="javascript:timer.reset()" style="margin-right: 70px;">Zurücksetzen</a> <a href="javascript:void(0);" id="stackmatToggle">Stackmat verwenden</a> <a href="javascript:void(0);" id="stackmatGenToggle" style="margin-right: 70px;">(gen2)</a> <a href="javascript:timer.close()">Schließen</a>
+			<a href="javascript:timer.reset()" style="margin-right: 70px;">Zurücksetzen <sup>[Z]</sup></a> <a href="javascript:void(0);" id="stackmatToggle">Stackmat verwenden</a> <a href="javascript:void(0);" id="stackmatGenToggle" style="margin-right: 70px;">(gen2)</a> <a href="javascript:timer.close()">Schließen <sup>[Esc]</sup></a>
 			<div class="ttime">00.00</div>
 			<div class="scramble"></div>
 			<div class="controls">
@@ -136,7 +136,7 @@ $ip = htmlentities($ip);
 					<input style="width: 24%;" name="input_field" maxlength="" autocomplete="off" type="text">
 					<input value="Senden!" type="submit">
 				</form>
-				<button onclick="timer.open();">Timer einblenden</button> Volume: <input type="range" value="0.5" min="0" max="1" step="0.0001" onchange="setGlobalVolume(this.value)" oninput="setGlobalVolume(this.value)" />
+				<button onclick="timer.open();">Timer einblenden <sup>[STRG+Leertaste]</sup></button> Volume: <input type="range" value="0.5" min="0" max="1" step="0.0001" onchange="setGlobalVolume(this.value)" oninput="setGlobalVolume(this.value)" />
 
 			</div>
 		</div>

@@ -190,6 +190,13 @@ $(document).ready(function() {
 	$(window).resize(function() {
 		updateResize();
 	});
+	
+	// timer shortcut
+	$(window).keyup(function(e) {
+		if (e.ctrlKey && e.keyCode == 32) { // ctrl-space
+	        timer.open();
+	    }
+	})
 
 	$(document).konami(function() {
 		audio.konami.volume = 1;

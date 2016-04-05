@@ -136,9 +136,6 @@ function Timer() {
 			return;
 		if (!This.running)
 			This.start();
-		
-		if (e.which == 90) // 'z'  <->  90
-            This.reset();
 	};
 
 	This.inputDown = function(e) {
@@ -155,6 +152,10 @@ function Timer() {
 			return;
 		if (e.which == 32) {
 			This.inputUp(e);
+		} else if (e.which == 90) { // 'z'
+            This.reset();
+		} else if (e.which == 27) { // escape
+			This.close();
 		}
 	});
 
