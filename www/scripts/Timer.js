@@ -136,6 +136,9 @@ function Timer() {
 			return;
 		if (!This.running)
 			This.start();
+		
+		if (e.which == 90) // 'z'  <->  90
+            This.reset();
 	};
 
 	This.inputDown = function(e) {
