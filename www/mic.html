@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="jQuery2.1.0.js"></script>
+<title>Stackmat Reader Prototype</title>
+<style type="text/css">
+#soundbar {
+	height: 50px;
+	background: #ddd;
+	margin: 100px auto;
+	width: 1200px;
+}
+
+#soundbar #middle {
+	margin-left: 50%;
+	width: 5px;
+	background-color: #aaa;
+	height: 100%;
+}
+
+#soundbar #indicator {
+	position: absolute;
+	width: 5px;
+	background-color: red;
+	height: 50px;
+	margin-left: 0px;
+	font-size: 40px;
+	padding-left: 6px;
+}
+</style>
+<script type="text/javascript">
+	var scriptNode;
+	var idle = true;
+	var sampleOffset = 0;
+	var period;
+	var lastValue = 0;
+	var lastBit = true;
+	var inverted = false;
+	var bitArray = new Array();
+
+	function processBitArray(bitArray) {
+		var asciis = new Array();
+		for (var i = 0; i < 90; i += 10) {
+			var num = bitArray[i + 1] ? 1 : 0;
+			num += bitArray[i + 2] ? 2 : 0;
+			num += bitArray[i + 3] ? 4 : 0;
+			num += bitArray[i + 4] ? 8 : 0;
+			num += bitArray[i + 5] ? 16 : 0;
+			num += bitArray[i + 6] ? 32 : 0;
+			num += bitArray[i + 7] ? 64 : 0;
+			num += bitArray[i + 8] ? 128 : 0;
+			asciis.push(num);
+		}
+		// checking via checksum
+		var sum = 64 + parseInt(String.fromCharCode(asciis[1])) + parseInt(String.fromCharCode(asciis[2])) + parseInt(String.fromCharCode(asciis[3])) + parseInt(String.fromCharCode(asciis[4])) + parseInt(String.fromCharCode(asciis[5]));
+		//document.write(String.fromCharCode.apply(null, asciis));
+		var string = String.fromCharCode.apply(null, asciis.slice(0, 7));
+		var ok = " ACILRS".indexOf(asciis[0]) > -1 && sum == asciis[6] && asciis[7] == 10 && asciis[8] == 13;
+		if (ok) {
+			console.log(string);
+			document.getElementById("main").innerHTML = string;
+		} else {
+			console.log("invalid package");
+		}
+	}
+
+	function processAudio(audioProcessingEvent) {
+		var inputBuffer = audioProcessingEvent.inputBuffer;
+
+		// Fetch the data from first (and only) channel
+		var data = inputBuffer.getChannelData(0);
+		
+		// Start, where last block ended to stay in the period
+		var i = sampleOffset;
+		
+		while (i < data.length) {
+			
+			// read from buffer
+			var value = data[Math.floor(i)];
+
+			// If the signal is inverted
+			if (inverted)
+				value *= -1;
+
+			// debug stuff.
+			$("#indicator").css("margin-left", ((value + 1) * 600) + "px");
+			$("#indicator").html(Math.round(value * 10) / 20);
+
+			// The firefox somehow smudges the signal: The values are not always properly over or under 0
+			// => You cannot distinguish the bytes by a threshold.
+			// Therefore the bits get distinguished by the difference to the previous period sample
+			// This is a little unstable, but I would say >90% of the time successful.
+			var bit;
+			// If the signal fell by > 0.4 AND is now < 0.2
+			if (lastValue - value > 0.4 && value < 0.2)
+				bit = 1;
+			// If the signal rose by > 0.4 AND is now > -0.2
+			else if (value - lastValue > 0.4 && value > -0.2)
+				bit = 0;
+			// otherwise the bit did not change
+			else
+				bit = lastBit;
+			
+			// The idle-state consists of 1's
+			// => first 0 gets the script out of idle, trying to fetch data
+			if (!bit)
+				idle = false;
+			
+			
+			if (!idle) {
+				
+				// Add current bit to stack and read new length
+				var length = bitArray.push(bit);
+				
+				// mark as corrupted if there is a missing start or stop bit
+				var corrupted = ((length % 10 == 1 && bit) || (length % 10 == 0 && !bit));
+				
+				if (corrupted) {
+					// skip 1 period ahead
+					i += period;
+					// try inverting the signal.
+					inverted = !inverted;
+				}
+				
+				// 90 databits make 1 packet. Process it.
+				if (length >= 90) {
+					processBitArray(bitArray);
+				}
+				
+				// if packet is over or data is corrupted, switch back to idle
+				if (length >= 90 || corrupted) {
+					bitArray = new Array();
+					idle = true;
+				}
+			}
+
+			// update values
+			lastValue = value;
+			lastBit = bit;
+			
+			// If the script is fetching data, always stay in the period.
+			// If the script is in idle state, scan in some smaller, odd periods
+			// Goal: The period offset changes to prevent the scan points to be constantly at the flank changes.
+			i += idle ? period / 1.141 : period;
+		}
+
+		// Debug stuff. So you can hear the stackmat input by connecting the script to the context.destination
+		var outData = audioProcessingEvent.outputBuffer.getChannelData(0);
+		for (var sample = 0; sample < outData.length; sample++) {
+			outData[sample] = data[sample] * 0.05; // lower volume
+		}
+		
+		// Stay in the period next script call
+		sampleOffset = i - data.length;
+
+	}
+
+	function mozWorkaround(stream) {
+		//alert("mozilla Workaround");
+		var a = document.createElement("audio");
+		a.volume = 0;
+		a.mozSrcObject = stream;
+		a.play();
+	}
+
+	function gotStream(stream) {
+		if (/Firefox/i.test(navigator.userAgent))
+			mozWorkaround(stream);
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		var audioContext = new AudioContext();
+		period = audioContext.sampleRate / 1200;
+		console.log("Samplerate: " + audioContext.sampleRate + ", period: " + period);
+
+		var bufferSource = audioContext.createMediaStreamSource(stream);
+		scriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+		scriptNode.onaudioprocess = processAudio;
+
+		bufferSource.connect(scriptNode);
+		//scriptNode.connect(audioContext.destination);
+
+	}
+
+	function noStream(error) {
+		alert("Zugriff auf Mikrofonspur fehlgeschlagen");
+		console.log(error);
+	}
+</script>
+</head>
+<body>
+
+	<div id="main"></div>
+	<div id="soundbar">
+		<div id="indicator"></div>
+		<div id="middle"></div>
+	</div>
+
+	<script type="text/javascript">
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+		navigator.getUserMedia({
+			audio : true
+		}, gotStream, noStream);
+	</script>
+</body>
+</html>

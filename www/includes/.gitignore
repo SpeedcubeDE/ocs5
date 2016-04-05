@@ -1,0 +1,4 @@
+config*
+!config.example.php
+connection*
+!connection.example.php
