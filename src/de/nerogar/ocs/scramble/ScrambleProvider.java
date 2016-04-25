@@ -60,6 +60,8 @@ public abstract class ScrambleProvider {
 		scrambleProvider.put("3x3", new ScrambleProviderTNoodle(new ThreeByThreeCubePuzzle()));
 		scrambleProvider.put("4x4", new ScrambleProviderTNoodle(new FourByFourCubePuzzle()));
 
+		scrambleProvider.put("1x1", new ScrambleProviderOCS(new ScramblerOneByOne()));
+
 		//needed to initialize some of the algorithms
 		for (ScrambleProvider s : scrambleProvider.values()) {
 			s.genNextScramble();
