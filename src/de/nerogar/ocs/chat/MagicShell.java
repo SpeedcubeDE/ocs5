@@ -19,13 +19,13 @@ public class MagicShell {
 			//neutral
 			"Vielleicht.",
 			"Unwahrscheinlich.",
-			"Lass mich in ruhe!",
+			"Lass mich in Ruhe!",
 			"Das hast du schon mal gefragt.",
 			"Frag {user}.",
-			"Bin ich jesus?",
+			"Bin ich Jesus?",
 			"Ich will nicht darüber reden.",
 			"Frag doch einfach nochmal.",
-			"Mach dir mal selber gedanken.",
+			"Mach dir mal selber Gedanken.",
 
 			//positive
 			"Ja."
@@ -37,8 +37,9 @@ public class MagicShell {
 
 		String shellName = OCSStrings.getString("chat.shell.name");
 
-		String testString = msg.toLowerCase();
-		if (testString.matches("^" + shellName + "(.){5,}")) {
+		String testString = msg.toLowerCase().trim();
+		testString = testString.replaceAll("\\s{2,}", " ");
+		if (testString.matches("^" + shellName + ".{5,}")) {
 
 			chatRoom.addMessage(false, getResponse(), null);
 
