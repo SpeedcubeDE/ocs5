@@ -113,8 +113,9 @@ $ip = htmlentities($ip);
 								<option value="Tower">Tower Cube</option>
 								<option value="Rubik's Tower">Rubik's Tower</option>
 								<option value="Rubik's Domino">Rubik's Domino</option>
+								<option value="1x1">1x1x1</option>
 								<option disabled></option>
-								<option disabled>by Prisma Timer</option>
+								<option disabled>by Prisma Timer & TNoodle</option>
 								<option disabled></option>
 							</select> <select name="ranking">
 								<option value="avg">Average</option>
