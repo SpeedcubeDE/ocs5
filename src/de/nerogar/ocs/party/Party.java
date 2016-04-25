@@ -6,16 +6,14 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerProvider;
-
 import de.nerogar.ocs.*;
 import de.nerogar.ocs.chat.Sound;
+import de.nerogar.ocs.scramble.ScrambleProvider;
 import de.nerogar.ocs.user.User;
 
 public class Party extends Sendable {
 
-	ScramblerProvider scramblerProvider = new ScramblerProvider();
+	
 	private static int MAX_ID;
 
 	public static final int MODE_NORMAL = 0;
@@ -34,7 +32,7 @@ public class Party extends Sendable {
 	private Userlist userlist;
 	public PartyUserResult[] results;
 	public String[] scrambles;
-	private Scrambler scrambler;
+	private ScrambleProvider scrambler;
 	private long lastScrambleTime;
 
 	public int currentRound;
@@ -107,7 +105,7 @@ public class Party extends Sendable {
 			scrambles = new String[rounds];
 			startTime = OCSServer.getTimestamp();
 
-			scrambler = scramblerProvider.get(ScrambleTypes.types.get(scrambleType));
+			scrambler = ScrambleProvider.getScrambleProvider(scrambleType);
 			genScramble(0);
 
 			List<User> userCollection = userlist.getUsers();
@@ -202,7 +200,7 @@ public class Party extends Sendable {
 
 		long currentTime = OCSServer.getTimestamp();
 		if (currentTime > lastScrambleTime + OCSServer.get1SecondTimestamp()) {
-			scrambles[index] = (scrambler == null) ? "" : scrambler.getNextScramble().getRawSequence();
+			scrambles[index] = (scrambler == null) ? "" : scrambler.genNextScramble();
 		} else {
 			scrambles[index] = OCSStrings.getString("party.error.scrambleLimit");
 		}

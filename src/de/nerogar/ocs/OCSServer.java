@@ -18,6 +18,7 @@ import org.json.simple.JSONObject;
 import de.nerogar.ocs.chat.ChatRoomManager;
 import de.nerogar.ocs.command.Command;
 import de.nerogar.ocs.party.PartyContainer;
+import de.nerogar.ocs.scramble.ScrambleProvider;
 import de.nerogar.ocs.sql.*;
 import de.nerogar.ocs.tasks.Scheduler;
 import de.nerogar.ocs.user.User;
@@ -88,13 +89,14 @@ public class OCSServer {
 
 		scheduler.start();
 
+		//init
 		Config.init();
 		Command.init();
 		Rank.init();
 		User.initPermissions();
-
-		//init events
-
+		ScrambleProvider.initScrambler();
+		
+		//init scheduler events
 		scheduler.addRepeatingTask(OCSServer::saveAll, getTimestamp(), -1, get1SecondTimestamp() * 60);
 	}
 
