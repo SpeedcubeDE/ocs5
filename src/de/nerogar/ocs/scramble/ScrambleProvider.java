@@ -34,11 +34,11 @@ public abstract class ScrambleProvider {
 		prismaTypes.put("7x7", "7x7x7-CUBE-RANDOM");
 
 		prismaTypes.put("Clock", "RUBIKS-CLOCK-RANDOM");
-		prismaTypes.put("Megaminx", "MEGAMINX-RANDOM");
-		prismaTypes.put("Pyraminx", "PYRAMINX-RANDOM");
-		prismaTypes.put("Square-1", "SQUARE-1-RANDOM");
+		//prismaTypes.put("Megaminx", "MEGAMINX-RANDOM");
+		//prismaTypes.put("Pyraminx", "PYRAMINX-RANDOM");
+		//prismaTypes.put("Square-1", "SQUARE-1-RANDOM");
 		prismaTypes.put("Floppy", "FLOPPY-CUBE-RANDOM");
-		prismaTypes.put("Skewb", "SKEWB-RANDOM");
+		//prismaTypes.put("Skewb", "SKEWB-RANDOM");
 
 		prismaTypes.put("2x2 URF", "2x2x2-CUBE-URF");
 		prismaTypes.put("3x3 easy cross", "RUBIKS-CUBE-EASY-CROSS");
@@ -59,6 +59,11 @@ public abstract class ScrambleProvider {
 		scrambleProvider.put("2x2", new ScrambleProviderTNoodle(new TwoByTwoCubePuzzle()));
 		scrambleProvider.put("3x3", new ScrambleProviderTNoodle(new ThreeByThreeCubePuzzle()));
 		scrambleProvider.put("4x4", new ScrambleProviderTNoodle(new FourByFourCubePuzzle()));
+
+		scrambleProvider.put("Megaminx", new ScrambleProviderTNoodle(new MegaminxPuzzle()));
+		scrambleProvider.put("Pyraminx", new ScrambleProviderTNoodle(new PyraminxPuzzle()));
+		scrambleProvider.put("Square-1", new ScrambleProviderTNoodle(new SquareOnePuzzle()));
+		scrambleProvider.put("Skewb", new ScrambleProviderTNoodle(new SkewbPuzzle()));
 
 		scrambleProvider.put("1x1", new ScrambleProviderOCS(new ScramblerOneByOne()));
 

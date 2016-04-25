@@ -12,7 +12,6 @@ import de.nerogar.ocs.scramble.ScrambleProvider;
 import de.nerogar.ocs.user.User;
 
 public class Party extends Sendable {
-
 	
 	private static int MAX_ID;
 
@@ -50,6 +49,8 @@ public class Party extends Sendable {
 		this.mode = mode;
 
 		this.ranking = ranking;
+		
+		scrambler = ScrambleProvider.getScrambleProvider(scrambleType);
 	}
 
 	public boolean canEdit(User user) {
@@ -105,7 +106,6 @@ public class Party extends Sendable {
 			scrambles = new String[rounds];
 			startTime = OCSServer.getTimestamp();
 
-			scrambler = ScrambleProvider.getScrambleProvider(scrambleType);
 			genScramble(0);
 
 			List<User> userCollection = userlist.getUsers();
