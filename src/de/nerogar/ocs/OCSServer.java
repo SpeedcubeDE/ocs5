@@ -46,6 +46,8 @@ public class OCSServer {
 
 	public OCSServer() throws Exception {
 
+		long startTime = OCSServer.getTimestamp();
+		
 		// Load Database connection info
 		Properties properties = new Properties();
 		Logger.log(Logger.INFO, "trying to load properties...");
@@ -98,6 +100,9 @@ public class OCSServer {
 		
 		//init scheduler events
 		scheduler.addRepeatingTask(OCSServer::saveAll, getTimestamp(), -1, get1SecondTimestamp() * 60);
+		
+		startTime = OCSServer.getTimestamp() - startTime;
+		Logger.log(Logger.INFO, "startup in " + Time.asStringDelta(startTime));
 	}
 
 	public void run() throws Exception {
