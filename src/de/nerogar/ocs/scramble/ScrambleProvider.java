@@ -53,24 +53,20 @@ public abstract class ScrambleProvider {
 
 		ScramblerProvider prismaScramblerProvider = new ScramblerProvider();
 		for (Entry<String, String> e : prismaTypes.entrySet()) {
+			//don't put prisma scramble generators in caches, because their solvers rely on static state in some classes (wtf?)
 			scrambleProvider.put(e.getKey(), new ScrambleProviderPrisma(prismaScramblerProvider.get(e.getValue())));
 		}
 
-		scrambleProvider.put("2x2", new ScrambleProviderTNoodle(new TwoByTwoCubePuzzle()));
-		scrambleProvider.put("3x3", new ScrambleProviderTNoodle(new ThreeByThreeCubePuzzle()));
-		scrambleProvider.put("4x4", new ScrambleProviderTNoodle(new FourByFourCubePuzzle()));
+		scrambleProvider.put("2x2", new ScrambleProviderCache(new ScrambleProviderTNoodle(new TwoByTwoCubePuzzle())));
+		scrambleProvider.put("3x3", new ScrambleProviderCache(new ScrambleProviderTNoodle(new ThreeByThreeCubePuzzle())));
+		scrambleProvider.put("4x4", new ScrambleProviderCache(new ScrambleProviderTNoodle(new FourByFourCubePuzzle())));
 
-		scrambleProvider.put("Megaminx", new ScrambleProviderTNoodle(new MegaminxPuzzle()));
-		scrambleProvider.put("Pyraminx", new ScrambleProviderTNoodle(new PyraminxPuzzle()));
-		scrambleProvider.put("Square-1", new ScrambleProviderTNoodle(new SquareOnePuzzle()));
-		scrambleProvider.put("Skewb", new ScrambleProviderTNoodle(new SkewbPuzzle()));
+		scrambleProvider.put("Megaminx", new ScrambleProviderCache(new ScrambleProviderTNoodle(new MegaminxPuzzle())));
+		scrambleProvider.put("Pyraminx", new ScrambleProviderCache(new ScrambleProviderTNoodle(new PyraminxPuzzle())));
+		scrambleProvider.put("Square-1", new ScrambleProviderCache(new ScrambleProviderTNoodle(new SquareOnePuzzle())));
+		scrambleProvider.put("Skewb", new ScrambleProviderCache(new ScrambleProviderTNoodle(new SkewbPuzzle())));
 
 		scrambleProvider.put("1x1", new ScrambleProviderOCS(new ScramblerOneByOne()));
-
-		//needed to initialize some of the algorithms
-		for (ScrambleProvider s : scrambleProvider.values()) {
-			s.genNextScramble();
-		}
 
 	}
 

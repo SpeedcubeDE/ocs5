@@ -15,4 +15,9 @@ public class ScrambleProviderPrisma extends ScrambleProvider {
 		return scrambler.getNextScramble().getRawSequence();
 	}
 
+	@Override
+	public String toString() {
+		return "scramble provider of " + scrambler.toString();
+	}
+	
 }
