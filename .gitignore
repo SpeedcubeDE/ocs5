@@ -4,3 +4,4 @@
 !.gitignore
 !*.lang
 !*.properties
+!*.sql
