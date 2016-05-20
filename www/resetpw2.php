@@ -24,14 +24,14 @@ if ($submit) {
 	if (count($errors) == 0) {
 		
 		// check if username and token are valid
-		$query = "SELECT id from " . DB_PREFIX . "user WHERE name = '" . escape($db, $username) . "' and resetToken = '" . escape($db, $token) . "' LIMIT 1";
+		$query = "SELECT id from " . DB_PREFIX . "user WHERE name = '" . escape($db, $username) . "' and resetToken = '" . escape($db, $token) . "' and resetToken <> '' LIMIT 1";
 		$result = $db->query($query);
 		if ($result->num_rows == 0) {
 			$errors[] = $lang["token_incorrect"];
 		} else {
 			$user = $result->fetch_object();
 			$crypted_pw = better_crypt($new_password);
-			$db->query("UPDATE " . DB_PREFIX . "user SET password = '" . $crypted_pw . "' WHERE id = $user->id LIMIT 1");
+			$db->query("UPDATE " . DB_PREFIX . "user SET password = '" . $crypted_pw . "', resetToken = '' WHERE id = $user->id LIMIT 1");
 			header("Location:index.php?changedpw");
 		}
 	}
