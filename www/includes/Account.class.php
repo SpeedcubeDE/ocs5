@@ -40,7 +40,8 @@ abstract class AccountError {
 				return $lang ['email_occupied'];
 			case self::PASSWORD_INVALID_LENGTH :
 				return lang_parse($lang ['password_invalid_length'], array (
-						Account::PASSWORD_MIN_LENGTH 
+						Account::PASSWORD_MIN_LENGTH,
+						Account::PASSWORD_MAX_LENGTH
 				));
 			case self::INVALID_EMAIL :
 				return $lang ['invalid_email'];
@@ -59,6 +60,7 @@ abstract class Account {
 	const USERNAME_MIN_LENGTH = 3;
 	const USERNAME_MAX_LENGTH = 20;
 	const PASSWORD_MIN_LENGTH = 6;
+	const PASSWORD_MAX_LENGTH = 9001;
 	const DEFAULT_STATUS = 'type /help for help';
 
 	public static function login($db, $username, $password, &$user) {
@@ -95,6 +97,16 @@ abstract class Account {
 	
 	}
 
+	public static function validatePassword($password) {
+		if (strlen($password) < Account::PASSWORD_MIN_LENGTH) {
+			return AccountError::PASSWORD_INVALID_LENGTH;
+		}
+		if (strlen($password) > Account::PASSWORD_MAX_LENGTH) {
+			return AccountError::PASSWORD_INVALID_LENGTH;
+		}
+		return AccountError::NO_ERROR;
+	}
+	
 	public static function register($db, $lang, $username, $password, $email) {
 		
 		Account::cleanup($db);
@@ -122,8 +134,9 @@ abstract class Account {
 			return AccountError::USERNAME_INVALID_CHARS;
 		}
 		
-		if (strlen($password) < 6) {
-			return AccountError::PASSWORD_INVALID_LENGTH;
+		$pwerror = Account::validatePassword($password);
+		if ($pwerror != AccountError::NO_ERROR) {
+			return $pwerror;
 		}
 		
 		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
@@ -168,12 +181,43 @@ abstract class Account {
 		return $token;
 	}
 
+	public static function sendResetMail($db, $lang, $username) {
+		// check if user exists
+		$result = $db->query("SELECT id, name, email FROM " . DB_PREFIX . "user WHERE name = '" . escape($db, $username) . "' LIMIT 1");
+		if ($result->num_rows == 0) {
+			// No user with that email.
+			return AccountError::NO_SUCH_USER;
+		}
+		$result = $result->fetch_object();
+		$userid = $result->id;
+		$email = $result->email;
+		$username = $result->name;
+		$token = Account::newResetToken($db, $userid);
+		$link = $_SERVER ['SERVER_NAME'] . dirname($_SERVER ['SCRIPT_NAME']) . "/resetpw2.php?username=" . urlencode($username) . "&token=" . urlencode($token);
+		
+		$text = lang_parse($lang ['resetpwmail_text'], array (
+				$username,
+				$link
+		));
+		
+		$header = 'From: noreply@' . $_SERVER ['SERVER_NAME'] . "\r\n" . 'X-Mailer: PHP/' . phpversion();
+		
+		if (mail($email, $lang ['resetpwmail_subject'], $text, $header) === false) return AccountError::EMAIL_SEND_ERROR;
+		return AccountError::NO_ERROR;
+	}
+	
 	public static function newLoginToken($db, $userid) {
 		$token = generateSalt(32);
 		$db->query("UPDATE " . DB_PREFIX . "user SET loginToken = '" . $token . "' WHERE id = $userid LIMIT 1");
 		return $token;
 	}
 
+	public static function newResetToken($db, $userid) {
+		$token = generateSalt(32);
+		$db->query("UPDATE " . DB_PREFIX . "user SET resetToken = '" . $token . "' WHERE id = $userid LIMIT 1");
+		return $token;
+	}
+	
 	public static function cleanup($db) {
 		$exptime = (time() - ACCOUNT_EXPIRATION) * 1000;
 		$db->query("DELETE FROM " . DB_PREFIX . "user WHERE registerToken != '' AND registerDate < " . $exptime);

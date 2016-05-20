@@ -68,6 +68,7 @@ foreach ($errors as $error) {
 
 $gets ['registered'] = EMAIL_VERIFICATION ? $lang ['registered_email'] : $lang ['registered'];
 $gets ['changedpw'] = $lang ['changed_pw'];
+$gets ['resetpw'] = $lang ['sent_reset_mail'];
 $gets ['activated'] = $lang ['activated'];
 $gets ['activation_failed'] = $lang ['activation_failed'];
 
@@ -94,7 +95,7 @@ foreach ($gets as $get => $text) {
 		</tr>
 		<tr>
 			<td></td>
-			<td><input type="submit" value="Abschicken!" /></td>
+			<td><input type="submit" value="Abschicken!" /> <a href="resetpw.php">Passwort vergessen?</a></td>
 		</tr>
 	</table>
 </form>
