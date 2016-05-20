@@ -13,4 +13,9 @@ public class ScrambleProviderOCS extends ScrambleProvider {
 		return scrambler.nextScramble();
 	}
 
+	@Override
+	public String toString() {
+		return "scramble provider of " + scrambler.toString();
+	}
+
 }

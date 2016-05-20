@@ -14,6 +14,7 @@ public class Config {
 	public static final String MAX_STATUS_LENGTH = "maxStatusLength";
 	public static final String MIN_CHAT_MSG_DELAY = "minChatMsgDelay";
 	public static final String LOGOUT_DELAY = "logoutDelay";
+	public static final String MAX_SCRAMBLE_CACHE_SIZE = "maxScrambleCacheSize";
 
 	public static HashMap<String, Integer> configs;
 
