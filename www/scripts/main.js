@@ -359,8 +359,9 @@ function handleChatmessage(msg, obj) {
 
 	handler.chatroom.tabber.highlight(msg.roomID);
 
-	// obj.append(html);
-	scrollToBottom();
+	if (autoscroll) {
+		scrollToBottom();
+	}
 }
 
 function getChatLine(msg, user) {
@@ -408,4 +409,9 @@ function setGlobalVolume(v) {
 	for (var key in audio) {
 		audio[key].volume = v * audio[key].baseVolume;
 	}	                                     
+}
+
+var autoscroll = true;
+function setAutoscroll(scroll) {
+	autoscroll = scroll;
 }

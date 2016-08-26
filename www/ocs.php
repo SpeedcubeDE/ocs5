@@ -137,8 +137,9 @@ $ip = htmlentities($ip);
 					<input style="width: 24%;" name="input_field" maxlength="" autocomplete="off" type="text">
 					<input value="Senden!" type="submit">
 				</form>
-				<button onclick="timer.open();">Timer einblenden <sup>[STRG+Leertaste]</sup></button> Volume: <input type="range" value="0.5" min="0" max="1" step="0.0001" onchange="setGlobalVolume(this.value)" oninput="setGlobalVolume(this.value)" />
-
+				<button onclick="timer.open();">Timer einblenden <sup>[STRG+Leertaste]</sup></button>
+				Volume: <input type="range" value="0.5" min="0" max="1" step="0.0001" onchange="setGlobalVolume(this.value)" oninput="setGlobalVolume(this.value)" />
+				Autoscroll: <input type="checkbox" checked="checked" onchange="setAutoscroll(this.checked)" />
 			</div>
 		</div>
 	</div>
