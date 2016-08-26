@@ -44,7 +44,7 @@ A.locked {
 	color: red;
 }
 
-input:not([type="range"]):not([type="checkbox"]),select,button {
+input[type="button"], input[type="submit"], input[type="text"], input[type="password"], input[type="number"], select, button {
 	border: none;
 	background-color: #2e2e2e;
 	border-radius: 2px;
