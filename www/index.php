@@ -3,7 +3,7 @@ require_once 'includes/header.php';
 
 $submit = isset($_POST ['submit']);
 $ip = @$_GET ['ip'];
-$ip = htmlentities($ip);
+$ip = preg_replace("/[^a-zA-Z0-9.]/", "", $ip);
 
 $errors = array ();
 $success = false;

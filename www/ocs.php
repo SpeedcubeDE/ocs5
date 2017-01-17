@@ -1,6 +1,6 @@
 <?php
 $ip = @$_REQUEST ['ip'];
-$ip = htmlentities($ip);
+$ip = preg_replace("/[^a-zA-Z0-9.]/", "", $ip);
 ?>
 <!DOCTYPE html>
 <html lang="de">
