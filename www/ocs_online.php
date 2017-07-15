@@ -49,15 +49,15 @@ $num = count($users);
 
 if ($num == 1) {
 	?>
-Im <a href="http://ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) ist <b>1</b> User online:
+Im <a href="//ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) ist <b>1</b> User online:
 	<?php
 } elseif ($num == 0) {
 	?>
-Im <a href="http://ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) sind <b>keine</b> User online.
+Im <a href="//ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) sind <b>keine</b> User online.
 	<?php
 } else {
 	?>
-Im <a href="http://ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) sind <b><?php echo $num; ?></b> User online, u.a. Folgende:
+Im <a href="//ocs.speedcube.de/" target="_blank">OCS</a> (online-cubing-system) sind <b><?php echo $num; ?></b> User online, u.a. Folgende:
 	<?php
 }
 
