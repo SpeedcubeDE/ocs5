@@ -75,7 +75,7 @@ function Socket() {
 
 	if (window.WebSocket) {
 		if (ip === "")
-			ip = "ocs.speedcube.de";
+			ip = window.location.hostname;
 		socket = new WebSocket("ws://" + ip + ":34543/websocket");
 		socket.onopen = onopen;
 		socket.onmessage = onmessage;
