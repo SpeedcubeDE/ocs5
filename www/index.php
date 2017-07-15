@@ -50,7 +50,7 @@ if ($success) {
 		window.onload = function() {
 			//document.forms["silentlogin"].submit();	
 			window.setTimeout(function() {
-				window.location = "//ocs.speedcube.de/ocs.php?ip=
+				window.location = "ocs.php?ip=
 EOT;
 	echo $ip;
 	echo '";}, 500);}</script>';
