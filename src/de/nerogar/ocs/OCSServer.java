@@ -1,20 +1,5 @@
 package de.nerogar.ocs;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-
-import java.io.*;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import de.nerogar.ocs.chat.ChatRoomManager;
 import de.nerogar.ocs.command.Command;
 import de.nerogar.ocs.party.PartyContainer;
@@ -23,31 +8,55 @@ import de.nerogar.ocs.sql.*;
 import de.nerogar.ocs.tasks.Scheduler;
 import de.nerogar.ocs.user.User;
 import de.nerogar.ocs.user.UserPool;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.io.*;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class OCSServer {
+
 	private int port;
 
-	public static Object syncObject = new Object();
+	public static final Object syncObject = new Object();
 
 	public static ChatRoomManager chatRoomManager;
-	public static PartyContainer partyContainer;
-	public static Userlist userlist;
-	public static UserPool userPool;
+	public static PartyContainer  partyContainer;
+	public static Userlist        userlist;
+	public static UserPool        userPool;
 	//public static OCSDatabase database;
-	public static Database databaseNew;
-	public static DatabaseLog databaseLog;
-	public static DatabaseUser databaseUser;
+	public static Database        databaseNew;
+	public static DatabaseLog     databaseLog;
+	public static DatabaseUser    databaseUser;
 	public static DatabaseProfile databaseProfile;
-	public static DatabaseParty databaseParty;
+	public static DatabaseParty   databaseParty;
 
 	public static String onlinefilePath;
+
+	public static boolean useCertFile;
+	public static String  certPath;
+	public static String  keyPath;
 
 	public static Scheduler scheduler;
 
 	public OCSServer() throws Exception {
 
 		long startTime = OCSServer.getTimestamp();
-		
+
 		// Load Database connection info
 		Properties properties = new Properties();
 		Logger.log(Logger.INFO, "trying to load properties...");
@@ -58,6 +67,10 @@ public class OCSServer {
 
 			onlinefilePath = properties.getProperty("onlinelist");
 			port = Integer.parseInt(properties.getProperty("port"));
+
+			useCertFile = Boolean.parseBoolean(properties.getProperty("useCertFile"));
+			certPath = properties.getProperty("certPath");
+			keyPath = properties.getProperty("keyPath");
 
 			PrintStream logStream = new PrintStream(new FileOutputStream(new File(properties.getProperty("log")), true));
 			PrintStream errorlogStream = new PrintStream(new FileOutputStream(new File(properties.getProperty("errorlog")), true));
@@ -97,27 +110,46 @@ public class OCSServer {
 		Rank.init();
 		User.initPermissions();
 		ScrambleProvider.initScrambler();
-		
+
 		//init scheduler events
 		scheduler.addRepeatingTask(OCSServer::saveAll, getTimestamp(), -1, get1SecondTimestamp() * 60);
-		
+
 		startTime = OCSServer.getTimestamp() - startTime;
 		Logger.log(Logger.INFO, "startup in " + Time.asStringDelta(startTime));
 	}
 
 	public void run() throws Exception {
+		SslContext sslCtx;
+
+		if (useCertFile) {
+			sslCtx = SslContextBuilder.forServer(new File(certPath), new File(keyPath)).build();
+		} else {
+			SelfSignedCertificate ssc = new SelfSignedCertificate();
+			sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+		}
+
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 
 		try {
 			final ServerBootstrap sb = new ServerBootstrap();
-			sb.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<SocketChannel>() {
-				@Override
-				public void initChannel(final SocketChannel ch) throws Exception {
-					OCSFrameHandler ocsFrameHandler = new OCSFrameHandler();
-					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder(), new HttpObjectAggregator(65536), new WebSocketServerProtocolHandler("/websocket"), ocsFrameHandler);
-				}
-			});
+			sb.group(bossGroup, workerGroup)
+					.channel(NioServerSocketChannel.class)
+					.childHandler(new ChannelInitializer<SocketChannel>() {
+						@Override
+						public void initChannel(final SocketChannel ch) throws Exception {
+
+							OCSFrameHandler ocsFrameHandler = new OCSFrameHandler();
+							ch.pipeline().addLast(
+									sslCtx.newHandler(ch.alloc()),
+									new HttpServerCodec(),
+									new HttpObjectAggregator(65536),
+									//new WebSocketServerCompressionHandler(),
+									new WebSocketServerProtocolHandler("/websocket"),
+									ocsFrameHandler
+							                     );
+						}
+					});
 
 			final Channel ch = sb.bind(port).sync().channel();
 			Logger.log(Logger.INFO, "OCS websocket server started at port " + port);
@@ -127,7 +159,7 @@ public class OCSServer {
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}
-		
+
 	}
 
 	/**

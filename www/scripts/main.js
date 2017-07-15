@@ -76,7 +76,7 @@ function Socket() {
 	if (window.WebSocket) {
 		if (ip === "")
 			ip = window.location.hostname;
-		socket = new WebSocket("ws://" + ip + ":34543/websocket");
+		socket = new WebSocket("wss://" + ip + ":34543/websocket");
 		socket.onopen = onopen;
 		socket.onmessage = onmessage;
 		socket.onclose = onclose;
