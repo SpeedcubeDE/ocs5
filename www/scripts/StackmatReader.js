@@ -182,7 +182,7 @@ function StackmatReader(updateCallback) {
 		// to the output. => Output it mute
 		var outData = audio.outputBuffer.getChannelData(0);
 		for (var sample = 0; sample < outData.length; sample++) {
-			outData[sample] = data[sample] * 0; // mute
+			outData[sample] = 0; // mute
 		}
 
 		// Stay in the period next script call

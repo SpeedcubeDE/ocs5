@@ -10,7 +10,7 @@ if ($submit) {
 	$username = $_POST ['username'];
 	$email = $_POST ['email'];
 		
-	$error = Account::sendResetMail($db, $lang, $username, $email);
+	$error = Account::sendResetMail($db, $lang, $username);
 	
 	if ($error == AccountError::NO_ERROR) {
 		header("Location:index.php?resetpw");

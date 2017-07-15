@@ -20,8 +20,8 @@ $ip = preg_replace("/[^a-zA-Z0-9.]/", "", $ip);
 	    var ca = document.cookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];
-	        while (c.charAt(0)==' ') c = c.substring(1);
-	        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+	        while (c.charAt(0)===' ') c = c.substring(1);
+	        if (c.indexOf(name) !== -1) return c.substring(name.length,c.length);
 	    }
 	    return "";
 	} 
@@ -133,7 +133,7 @@ $ip = preg_replace("/[^a-zA-Z0-9.]/", "", $ip);
 			</div>
 			<div id="input">
 
-				<form class="nosubmit" onsubmit="handler.chat.chat(this.input_field.value), this.input_field.value='';" action="#">
+				<form class="nosubmit" onsubmit="handler.chat.chat(this.input_field.value); this.input_field.value='';" action="#">
 					<input style="width: 24%;" name="input_field" maxlength="" autocomplete="off" type="text">
 					<input value="Senden!" type="submit">
 				</form>

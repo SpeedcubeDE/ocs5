@@ -4,7 +4,7 @@ require_once 'includes/header.php';
 
 <h2>Über das OCS</h2>
 <p>Diese Anwendung, welche sie im Moment vor sich haben, ist eine Grunderneuerung des ursprünglichen 1-Mann-Projektes "Online-Cubing-System" (<a href="http://speedcube.de/forum/showthread.php?tid=169" target="_blank">Thread</a>), welches von September 2009 bis Juni 2014 gute Dienste geleistet hatte.<br />
-Aufgabe jenes war es, über das Internet das gemeinsame Speedcuben und Chatten von Mitgliedern der Speedcubing (insbesondere Speedcube.de) Community zu ermöglichen. Dieses war serverseitig in PHP realisiert, weshalb es hohe Serverlasten und große Latenzzeiten aufwieß. Mehrere Erneuerungsversuche waren aus technischen Gründen gescheitert, bis schließlich dieses OCS entwickelt wurde.</p>
+Aufgabe jenes war es, über das Internet das gemeinsame Speedcuben und Chatten von Mitgliedern der Speedcubing (insbesondere Speedcube.de) Community zu ermöglichen. Dieses war serverseitig in PHP realisiert, weshalb es hohe Serverlasten und große Latenzzeiten aufwies. Mehrere Erneuerungsversuche waren aus technischen Gründen gescheitert, bis schließlich dieses OCS entwickelt wurde.</p>
 
 <p>Dieses OCS basiert auf HTML5-Websockets, weshalb es neben nahezu gar keinen Latenzzeiten eine sehr hohe Performanz und Flexibilität aufweist. Durch die modernen HTML5-Techniken ist es auch ein gutes Stück dynamischer als sein Vorgänger.<br />
 Hier nun technische Details für die Nerds unter uns...</p>

@@ -1,7 +1,7 @@
 (function($) {
 
 	$.fn.konami = function(callback, code) {
-		if (code == undefined)
+		if (code === undefined)
 			code = "38,38,40,40,37,39,37,39,66,65";
 
 		return this.each(function() {
