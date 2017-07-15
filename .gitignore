@@ -1,6 +1,6 @@
 *
-!/src
-!/www
+!/src/**/*
+!/www/**/*
 !.gitignore
 !*.lang
 !*.properties
