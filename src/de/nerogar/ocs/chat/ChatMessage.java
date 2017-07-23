@@ -21,13 +21,19 @@ public class ChatMessage extends Sendable {
 
 	public boolean saved; //saved in the database
 
-	public ChatMessage(int userID, ChatRoom chatRoom, boolean me, String[] message, long timestamp) {
-		this.id = getNewID();
+	public ChatMessage(int id, int userID, ChatRoom chatRoom, boolean me, String[] message, long timestamp, boolean saved) {
+		this.id = id;
 		this.userID = userID;
 		this.chatRoom = chatRoom;
 		this.me = me;
 		this.message = message;
 		this.timestamp = timestamp;
+
+		this.saved = saved;
+	}
+
+	public ChatMessage(int userID, ChatRoom chatRoom, boolean me, String[] message, long timestamp) {
+		this(getNewID(), userID, chatRoom, me, message, timestamp, false);
 	}
 
 	public ChatMessage(int userID, ChatRoom chatRoom, boolean me, List<String> message, long timestamp) {

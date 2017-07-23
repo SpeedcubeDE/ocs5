@@ -53,6 +53,15 @@ public class ChatRoom extends Sendable {
 		}
 	}
 
+	/**
+	 * adds chat messages during initialization
+	 *
+	 * @param message the message object
+	 */
+	public void addMessage(ChatMessage message) {
+		messages.add(message);
+	}
+
 	public boolean hasUser(User user) {
 		return userlist.hasUser(user);
 	}
@@ -129,7 +138,6 @@ public class ChatRoom extends Sendable {
 	}
 
 	public void removeOldMessages() {
-		//könnte fehlerhaft sein
 		int loginMsgLimit = Config.getValue(Config.LOGIN_MSG_LIMIT);
 		for (int i = messages.size() - 1 - loginMsgLimit; i >= 0; i--) {
 			ChatMessage message = messages.get(i);

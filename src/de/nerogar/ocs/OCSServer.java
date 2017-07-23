@@ -96,6 +96,10 @@ public class OCSServer {
 			throw new Exception("server could not start");
 		}
 
+		// init
+		Config.init();
+
+		// create objects
 		userlist = new Userlist();
 		chatRoomManager = new ChatRoomManager();
 		partyContainer = new PartyContainer();
@@ -104,8 +108,7 @@ public class OCSServer {
 
 		scheduler.start();
 
-		//init
-		Config.init();
+		// init
 		Command.init();
 		Rank.init();
 		User.initPermissions();

@@ -1,9 +1,15 @@
 package de.nerogar.ocs.sql;
 
-import java.sql.*;
-import java.util.List;
+import de.nerogar.ocs.Config;
+import de.nerogar.ocs.chat.ChatMessage;
+import de.nerogar.ocs.chat.ChatRoom;
+import de.nerogar.ocs.chat.ChatRoomManager;
 
-import de.nerogar.ocs.chat.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseChat extends DatabaseAdapter {
 
@@ -13,6 +19,8 @@ public class DatabaseChat extends DatabaseAdapter {
 
 	public void loadChatRooms(ChatRoomManager chatRoomManager) {
 		PreparedStatement ps = null;
+
+		List<ChatRoom> chatRooms = new ArrayList<>();
 
 		try {
 			ps = database.getConnection().prepareStatement("SELECT * FROM " + prefix + "chatroom WHERE closed = 0");
@@ -27,7 +35,9 @@ public class DatabaseChat extends DatabaseAdapter {
 				String password = result.getString("password");
 				String salt = result.getString("salt");
 
-				chatRoomManager.addChatRoom(new ChatRoom(id, name, ownerID, minPower, password, salt));
+				ChatRoom chatRoom = new ChatRoom(id, name, ownerID, minPower, password, salt);
+				chatRooms.add(chatRoom);
+				chatRoomManager.addChatRoom(chatRoom);
 			}
 
 		} catch (SQLException e) {
@@ -35,6 +45,33 @@ public class DatabaseChat extends DatabaseAdapter {
 		} finally {
 			closeOrFail(ps);
 		}
+
+		try {
+			ps = database.getConnection().prepareStatement("SELECT * FROM (SELECT * FROM " + prefix + "chat WHERE chatroomID = ? ORDER BY id DESC LIMIT ?) sub ORDER BY id ASC");
+
+			for (ChatRoom chatRoom : chatRooms) {
+
+				ps.setInt(1, chatRoom.id);
+				ps.setInt(2, Config.getValue(Config.LOGIN_MSG_LIMIT));
+
+				ResultSet result = ps.executeQuery();
+
+				while (result.next()) {
+					int id = result.getInt("id");
+					int userID = result.getInt("userID");
+					long timestamp = result.getLong("time");
+					String message = result.getString("msg");
+
+					chatRoom.addMessage(new ChatMessage(id, userID, chatRoom, false, new String[] { message }, timestamp, true));
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeOrFail(ps);
+		}
+
 	}
 
 	public void saveChatRoom(ChatRoom chatRoom) {
