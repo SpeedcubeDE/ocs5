@@ -1,39 +1,64 @@
 package de.nerogar.ocs;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Logger {
+
+	private static final String[] LOG_LEVEL_STRINGS = {
+			"debug",
+			"info",
+			"warning",
+			"error"
+	};
 
 	/**
 	 * Information to find bugs during development.
 	 */
-	public static final int DEBUG = 0;
-	private static final PrintWriter DEBUG_WRITER = (new LogWriter(DEBUG));
+	public static final  int         DEBUG        = 0;
+	private static final PrintStream DEBUG_STREAM = new LogStream(DEBUG);
 
 	/**
-	 * More important than debug information. 
+	 * More important than debug information.
 	 */
-	public static final int INFO = 1;
-	private static final PrintWriter INFO_WRITER = (new LogWriter(INFO));
+	public static final  int         INFO        = 1;
+	private static final PrintStream INFO_STREAM = new LogStream(INFO);
 
 	/**
 	 * Warnings about unexpected behavior.
 	 */
-	public static final int WARNING = 2;
-	private static final PrintWriter WARNING_WRITER = (new LogWriter(WARNING));
+	public static final  int         WARNING        = 2;
+	private static final PrintStream WARNING_STREAM = new LogStream(WARNING);
 
 	/**
 	 * Problems that can cause a crash.
 	 */
-	public static final int ERROR = 4;
-	private static final PrintWriter ERROR_WRITER = (new LogWriter(ERROR));
+	public static final  int         ERROR        = 3;
+	private static final PrintStream ERROR_STREAM = new LogStream(ERROR);
 
 	private static List<LogOutStream> logStreams;
+	private static List<LogListener>  logListener;
+
+	private static boolean    printTimestamp = false;
+	private static DateFormat dateFormat     = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
-	 * @param minLogLevel the minimum loglevel to print on this stream 
-	 * @param stream the printStream for message output
+	 * acitvates or deactivates the output of timestamps in log messages
+	 *
+	 * @param print the new printTimestamp value
+	 */
+	public static void setPrintTimestamp(boolean print) {
+		printTimestamp = print;
+	}
+
+	/**
+	 * @param minLogLevel the minimum loglevel to print on this stream
+	 * @param stream      the printStream for message output
 	 */
 	public static void addStream(int minLogLevel, PrintStream stream) {
 		logStreams.add(new LogOutStream(minLogLevel, ERROR, stream));
@@ -42,7 +67,7 @@ public class Logger {
 	/**
 	 * @param minLogLevel the minimum loglevel to print on this stream
 	 * @param maxLogLevel the maximum loglevel to print on this stream
-	 * @param stream the printStream for message output
+	 * @param stream      the printStream for message output
 	 */
 	public static void addStream(int minLogLevel, int maxLogLevel, PrintStream stream) {
 		logStreams.add(new LogOutStream(minLogLevel, maxLogLevel, stream));
@@ -50,6 +75,7 @@ public class Logger {
 
 	/**
 	 * removes any stream that is equal to the specified stream.
+	 *
 	 * @param stream the stream to remove
 	 * @return true, if a stream was removed, false otherwise
 	 */
@@ -58,59 +84,96 @@ public class Logger {
 	}
 
 	/**
-	 * returns a {@link PrintWriter} for easy debug logging
-	 * @return the debug writer
+	 * @param minLogLevel the minimum loglevel to print on this listener
+	 * @param listener    the listener for message output
 	 */
-	public static PrintWriter getDebugWriter() {
-		return DEBUG_WRITER;
+	public static void addListener(int minLogLevel, Consumer<String> listener) {
+		logListener.add(new LogListener(minLogLevel, ERROR, listener));
 	}
 
 	/**
-	 * returns a {@link PrintWriter} for easy info logging
-	 * @return the info writer
+	 * @param minLogLevel the minimum loglevel to print on this listener
+	 * @param maxLogLevel the maximum loglevel to print on this listener
+	 * @param listener    the listener for message output
 	 */
-	public static PrintWriter getInfoWriter() {
-		return INFO_WRITER;
+	public static void addListener(int minLogLevel, int maxLogLevel, Consumer<String> listener) {
+		logListener.add(new LogListener(minLogLevel, maxLogLevel, listener));
 	}
 
 	/**
-	 * returns a {@link PrintWriter} for easy warning logging
-	 * @return the warning writer
+	 * removes any listener that is equal to the specified listener.
+	 *
+	 * @param listener the listener to remove
+	 * @return true, if a listener was removed, false otherwise
 	 */
-	public static PrintWriter getWarningWriter() {
-		return WARNING_WRITER;
+	public static boolean removeListener(Consumer<String> listener) {
+		return logListener.removeIf((a) -> a.listener.equals(listener));
 	}
 
 	/**
-	 * returns a {@link PrintWriter} for easy error logging
-	 * @return the error writer
+	 * returns a {@link PrintStream} for easy debug logging
+	 *
+	 * @return the debug stream
 	 */
-	public static PrintWriter getErrorWriter() {
-		return ERROR_WRITER;
+	public static PrintStream getDebugStream() {
+		return DEBUG_STREAM;
+	}
+
+	/**
+	 * returns a {@link PrintStream} for easy info logging
+	 *
+	 * @return the info stream
+	 */
+	public static PrintStream getInfoStream() {
+		return INFO_STREAM;
+	}
+
+	/**
+	 * returns a {@link PrintStream} for easy warning logging
+	 *
+	 * @return the warning stream
+	 */
+	public static PrintStream getWarningStream() {
+		return WARNING_STREAM;
+	}
+
+	/**
+	 * returns a {@link PrintStream} for easy error logging
+	 *
+	 * @return the error stream
+	 */
+	public static PrintStream getErrorStream() {
+		return ERROR_STREAM;
 	}
 
 	/**
 	 * prints the message to all attached streams with the correct log level
-	 * 
+	 *
 	 * @param logLevel the loglevel for this message
-	 * @param msg the message as a String
+	 * @param msg      the message as a String
 	 */
 	public static void log(int logLevel, String msg) {
-		logStreams.forEach((logStream) -> {
+		for (LogOutStream logStream : logStreams) {
 			if (logLevel >= logStream.minLogLevel && logLevel <= logStream.maxLogLevel) {
 				print(logStream.stream, logLevel, msg);
 			}
-		});
+		}
+
+		for (LogListener listener : logListener) {
+			if (logLevel >= listener.minLogLevel && logLevel <= listener.maxLogLevel) {
+				print(listener.listener, logLevel, msg);
+			}
+		}
 	}
 
 	/**
 	 * calls </code>.toString()</code> on msg and logs it
-	 * 
+	 *
 	 * @param logLevel the loglevel for this message
-	 * @param msg the Object to log
+	 * @param msg      the Object to log
 	 */
 	public static void log(int logLevel, Object msg) {
-		logStreams.forEach((logStream) -> {
+		for (LogOutStream logStream : logStreams) {
 			if (logLevel >= logStream.minLogLevel && logLevel <= logStream.maxLogLevel) {
 				if (msg instanceof Object[]) {
 					print(logStream.stream, logLevel, Arrays.deepToString((Object[]) msg));
@@ -118,23 +181,49 @@ public class Logger {
 					print(logStream.stream, logLevel, msg.toString());
 				}
 			}
-		});
+		}
+
+		for (LogListener listener : logListener) {
+			if (logLevel >= listener.minLogLevel && logLevel <= listener.maxLogLevel) {
+				if (msg instanceof Object[]) {
+					print(listener.listener, logLevel, Arrays.deepToString((Object[]) msg));
+				} else {
+					print(listener.listener, logLevel, msg.toString());
+				}
+			}
+		}
 	}
 
 	private static void print(PrintStream stream, int logLevel, String msg) {
-		stream.println("[" + logLevel + "] " + msg);
+		if (printTimestamp) {
+			Date date = new Date();
+			stream.println(dateFormat.format(date) + " [" + LOG_LEVEL_STRINGS[logLevel] + "] " + msg);
+		} else {
+			stream.println("[" + LOG_LEVEL_STRINGS[logLevel] + "] " + msg);
+		}
+	}
+
+	private static void print(Consumer<String> listener, int logLevel, String msg) {
+		if (printTimestamp) {
+			Date date = new Date();
+			listener.accept(dateFormat.format(date) + " [" + LOG_LEVEL_STRINGS[logLevel] + "] " + msg);
+		} else {
+			listener.accept("[" + LOG_LEVEL_STRINGS[logLevel] + "] " + msg);
+		}
 	}
 
 	static {
-		logStreams = new ArrayList<LogOutStream>();
+		logStreams = new ArrayList<>();
+		logListener = new ArrayList<>();
 	}
 
 	/**
 	 * A class to store the output streams
 	 */
 	private static class LogOutStream {
-		public int minLogLevel;
-		public int maxLogLevel;
+
+		public int         minLogLevel;
+		public int         maxLogLevel;
 		public PrintStream stream;
 
 		public LogOutStream(int minLogLevel, int maxLogLevel, PrintStream stream) {
@@ -145,12 +234,28 @@ public class Logger {
 	}
 
 	/**
-	 * a writer that does nothing
+	 * A class to store the listener
 	 */
-	private static class NullWriter extends Writer {
+	private static class LogListener {
+
+		public int              minLogLevel;
+		public int              maxLogLevel;
+		public Consumer<String> listener;
+
+		public LogListener(int minLogLevel, int maxLogLevel, Consumer<String> listener) {
+			this.minLogLevel = minLogLevel;
+			this.maxLogLevel = maxLogLevel;
+			this.listener = listener;
+		}
+	}
+
+	/**
+	 * a stream that does nothing
+	 */
+	private static class NullStream extends OutputStream {
 
 		@Override
-		public void write(char[] cbuf, int off, int len) throws IOException {
+		public void write(int b) throws IOException {
 			//do nothing
 		}
 
@@ -167,14 +272,14 @@ public class Logger {
 	}
 
 	/**
-	 * A class to write to for writer based interfaces
+	 * A stream fpr logging different datatypes
 	 */
-	private static class LogWriter extends PrintWriter {
+	private static class LogStream extends PrintStream {
 
 		private int logLevel;
 
-		public LogWriter(int logLevel) {
-			super(new NullWriter());
+		public LogStream(int logLevel) {
+			super(new NullStream());
 			this.logLevel = logLevel;
 		}
 
@@ -274,41 +379,41 @@ public class Logger {
 		}
 
 		@Override
-		public PrintWriter printf(String format, Object... args) {
+		public PrintStream printf(String format, Object... args) {
 			return format(format, args);
 		}
 
 		@Override
-		public PrintWriter printf(Locale l, String format, Object... args) {
+		public PrintStream printf(Locale l, String format, Object... args) {
 			return format(l, format, args);
 		}
 
 		@Override
-		public PrintWriter append(CharSequence csq) {
-			write(csq.toString());
+		public PrintStream append(CharSequence csq) {
+			print(csq.toString());
 			return this;
 		}
 
 		@Override
-		public PrintWriter format(String format, Object... args) {
+		public PrintStream format(String format, Object... args) {
 			log(logLevel, String.format(format, args));
 			return this;
 		}
 
 		@Override
-		public PrintWriter format(Locale l, String format, Object... args) {
+		public PrintStream format(Locale l, String format, Object... args) {
 			log(logLevel, String.format(l, format, args));
 			return this;
 		}
 
 		@Override
-		public PrintWriter append(CharSequence csq, int start, int end) {
-			write(csq.subSequence(start, end).toString());
+		public PrintStream append(CharSequence csq, int start, int end) {
+			print(csq.subSequence(start, end).toString());
 			return this;
 		}
 
 		@Override
-		public PrintWriter append(char c) {
+		public PrintStream append(char c) {
 			write(c);
 			return this;
 		}
@@ -316,26 +421,6 @@ public class Logger {
 		@Override
 		public void write(int c) {
 			log(c, String.valueOf(c));
-		}
-
-		@Override
-		public void write(char[] buf) {
-			log(logLevel, String.valueOf(buf));
-		}
-
-		@Override
-		public void write(String s) {
-			log(logLevel, s);
-		}
-
-		@Override
-		public void write(char[] cbuf, int off, int len) {
-			log(logLevel, String.valueOf(cbuf, off, len));
-		}
-
-		@Override
-		public void write(String s, int off, int len) {
-			log(logLevel, s.substring(off, off + len));
 		}
 
 		@Override

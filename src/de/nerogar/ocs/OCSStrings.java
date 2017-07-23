@@ -26,7 +26,7 @@ public class OCSStrings {
 
 		} catch (FileNotFoundException e) {
 			Logger.log(Logger.ERROR, "Could not load language file");
-			e.printStackTrace(Logger.getErrorWriter());
+			e.printStackTrace(Logger.getErrorStream());
 		}
 	}
 

@@ -57,7 +57,7 @@ public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 					user.getDataParser().parse(msg.text());
 				} catch (Exception e) {
 					new Alert(Alert.ERROR, false, OCSStrings.getString("system.internalError")).sendTo(user);
-					e.printStackTrace(Logger.getErrorWriter());
+					e.printStackTrace(Logger.getErrorStream());
 				}
 			}
 		}
@@ -92,7 +92,7 @@ public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 			ctx.writeAndFlush(new TextWebSocketFrame(new Alert(Alert.ERROR, false, OCSStrings.getString("system.internalError")).send(null)));
 		}
 
-		cause.printStackTrace(Logger.getErrorWriter());
+		cause.printStackTrace(Logger.getErrorStream());
 
 	}
 

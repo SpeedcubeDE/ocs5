@@ -13,7 +13,7 @@ public class Sha2 {
 			md = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
 			Logger.log(Logger.ERROR, "MISSING HASH ALGORITHM SHA-256 !!!");
-			e.printStackTrace(Logger.getErrorWriter());
+			e.printStackTrace(Logger.getErrorStream());
 			return "";
 		}
 		md.update(data.getBytes());

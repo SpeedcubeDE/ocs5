@@ -103,7 +103,7 @@ public class Scheduler extends Thread {
 							lock.wait(waitTime);
 						} catch (InterruptedException e) {
 							//thread was woken up
-							e.printStackTrace(Logger.getErrorWriter());
+							e.printStackTrace(Logger.getErrorStream());
 						}
 					}
 				}
@@ -120,7 +120,7 @@ public class Scheduler extends Thread {
 					try {
 						nextTask.task.run();
 					} catch (Exception e) {
-						e.printStackTrace(Logger.getErrorWriter());
+						e.printStackTrace(Logger.getErrorStream());
 					}
 
 					Logger.log(Logger.DEBUG, "scheduler run: " + nextTask.task);

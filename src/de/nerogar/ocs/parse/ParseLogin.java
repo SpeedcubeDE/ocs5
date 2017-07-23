@@ -21,7 +21,7 @@ public class ParseLogin {
 				return key;
 			}
 		} catch (ParseException e) {
-			e.printStackTrace(Logger.getErrorWriter());
+			e.printStackTrace(Logger.getErrorStream());
 		}
 
 		return null;

@@ -218,7 +218,7 @@ public class OCSServer {
 			out.print(saveString);
 			out.close();
 		} catch (IOException e1) {
-			e1.printStackTrace(Logger.getErrorWriter());
+			e1.printStackTrace(Logger.getErrorStream());
 		}
 
 	}
@@ -232,6 +232,8 @@ public class OCSServer {
 	}
 
 	public static void main(String[] args) throws Exception {
+		Logger.setPrintTimestamp(true);
+
 		int logLevel = Logger.DEBUG;
 
 		if (args.length > 0) {
@@ -245,7 +247,7 @@ public class OCSServer {
 			OCSServer server = new OCSServer();
 			server.run();
 		} catch (Exception e) {
-			e.printStackTrace(Logger.getErrorWriter());
+			e.printStackTrace(Logger.getErrorStream());
 			return;
 		}
 	}

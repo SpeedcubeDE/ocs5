@@ -19,7 +19,7 @@ public abstract class DatabaseAdapter {
 		try {
 			if (ps != null) ps.close();
 		} catch (SQLException e) {
-			e.printStackTrace(Logger.getErrorWriter());
+			e.printStackTrace(Logger.getErrorStream());
 		}
 	}
 
