@@ -1,5 +1,6 @@
 system.internalError=Serverfehler
 system.stop=Server beendet
+system.restart=Server wird neu gestartet
 system.logout.differentLocation=Gekickt: Login von einem anderen Ort!
 
 

@@ -30,6 +30,9 @@ import java.util.Properties;
 
 public class OCSServer {
 
+	public static final int EXIT_STOP = 0;
+	public static final int EXIT_RESTART = 1;
+
 	private int port;
 
 	public static final Object syncObject = new Object();

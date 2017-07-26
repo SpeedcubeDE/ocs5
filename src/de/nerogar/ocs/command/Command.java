@@ -121,6 +121,7 @@ public abstract class Command implements Comparable<Command> {
 		registerCommand(new SetPowerCommand());
 		registerCommand(new SaveAllCommand());
 		registerCommand(new StopCommand());
+		registerCommand(new RestartCommand());
 		registerCommand(new PermissionCommand());
 		registerCommand(new CommandCommand());
 		registerCommand(new ProfileCommand());
