@@ -1,21 +1,21 @@
 package de.nerogar.ocs;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-
-import java.net.InetSocketAddress;
-
-import org.json.simple.JSONObject;
-
 import de.nerogar.ocs.chat.Alert;
 import de.nerogar.ocs.parse.ParseLogin;
 import de.nerogar.ocs.tasks.Task;
 import de.nerogar.ocs.user.User;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-	private User user;
+	private User    user;
 	private boolean auth;
 
 	public ChannelHandlerContext ctx;
@@ -55,7 +55,7 @@ public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 				try {
 
 					user.getDataParser().parse(msg.text());
-				} catch (Exception e) {
+				} catch (ParseException e) {
 					new Alert(Alert.ERROR, false, OCSStrings.getString("system.internalError")).sendTo(user);
 					e.printStackTrace(Logger.getErrorStream());
 				}
@@ -64,7 +64,7 @@ public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 		if (user != null) user.refreshTimeout();
 
 		OCSServer.flushUsers();
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,7 +92,11 @@ public class OCSFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFr
 			ctx.writeAndFlush(new TextWebSocketFrame(new Alert(Alert.ERROR, false, OCSStrings.getString("system.internalError")).send(null)));
 		}
 
-		cause.printStackTrace(Logger.getErrorStream());
+		if (cause instanceof IOException) {
+			cause.printStackTrace(Logger.getDebugStream());
+		} else {
+			cause.printStackTrace(Logger.getErrorStream());
+		}
 
 	}
 
