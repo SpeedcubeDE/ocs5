@@ -60,6 +60,7 @@ function HandlerUserlist(userlist) {
 		}
 		this.update();
 		$(".user_" + u.id).html(u.username);
+		this.updateUserlist(handler.chatroom.getSelectedRoom());
 	};
 
 	this.whisper = function(id) {
