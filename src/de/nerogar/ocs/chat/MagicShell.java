@@ -28,7 +28,9 @@ public class MagicShell {
 			"Mach dir mal selber Gedanken.",
 
 			//positive
-			"Ja."
+			"Ja.",
+			"Eines Tages vielleicht.",
+			"Ich denke schon. {user}, was sagst du dazu?",
 	};
 
 	private static Random random = new Random();
@@ -52,7 +54,7 @@ public class MagicShell {
 	private static String getResponse() {
 		String response = messages[random.nextInt(messages.length - 1)];
 		User randomUser = OCSServer.userlist.getRandomUser();
-		response = response.replaceAll("\\{user\\}", Matcher.quoteReplacement(randomUser == null ? "null" : randomUser.getUsername()));
+		response = response.replaceAll("\\{user}", Matcher.quoteReplacement(randomUser == null ? "null" : randomUser.getUsername()));
 		return response;
 	}
 }
