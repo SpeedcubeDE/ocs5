@@ -1,6 +1,7 @@
 package de.nerogar.ocs.chat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -122,7 +123,18 @@ public class ChatRoom extends Sendable {
 		JSONObject userlistJSON = new JSONObject();
 
 		JSONArray usersArray = new JSONArray();
-		for (User listUser : userlist.getUsers()) {
+
+		List<User> users = userlist.getUsers();
+
+		users.sort((a, b) -> {
+			if (a.getPower() == b.getPower()) {
+				return a.getUsername().compareTo(b.getUsername());
+			} else {
+				return a.getPower() - b.getPower();
+			}
+		});
+
+		for (User listUser : users) {
 			JSONObject userObject = new JSONObject();
 
 			userObject.put("id", listUser.getID());
