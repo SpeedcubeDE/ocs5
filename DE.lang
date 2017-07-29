@@ -17,9 +17,11 @@ command.numberFormat={1} ist keine gültige Zahl.
 command.setRank.error.rank=Der Rang {1} existiert nicht.
 command.setRank.error=Konnte Userrang nicht ändern.
 command.setRank.change={1} hat jetzt den Rang {2}.
+command.setRank.changeOwn=Du hast jetzt den Rang {1}.
 
 command.setPower.error=Konnte Userpower nicht ändern.
 command.setPower.change={1} hat jetzt das Rechtelevel {2}.
+command.setPower.changeOwn=Du hast jetzt das Rechtelevel {1}.
 
 command.saveAll.saved=Saved All! ({1})
 

@@ -3,6 +3,7 @@ package de.nerogar.ocs.command;
 import java.util.List;
 
 import de.nerogar.ocs.*;
+import de.nerogar.ocs.chat.Alert;
 import de.nerogar.ocs.chat.ChatRoom;
 import de.nerogar.ocs.user.User;
 
@@ -27,6 +28,7 @@ public class SetRankCommand extends Command {
 		if (newPower < user.getPower() || user.hasPermission(User.MAX_POWER)) {
 			targetUser.setPower(newPower);
 			user.sendMessage(chatRoom, OCSStrings.getString("command.setRank.change", targetUser.getUsername(), Rank.getRankString(targetUser.getPower(), true)));
+			new Alert(Alert.INFORMATION, true, OCSStrings.getString("command.setRank.changeOwn", Rank.getRankString(targetUser.getPower(), true))).sendTo(targetUser);
 		} else {
 			user.sendMessage(chatRoom, OCSStrings.getString("command.setRank.error"));
 		}

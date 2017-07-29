@@ -1,6 +1,7 @@
 package de.nerogar.ocs.command;
 
 import de.nerogar.ocs.*;
+import de.nerogar.ocs.chat.Alert;
 import de.nerogar.ocs.chat.ChatRoom;
 import de.nerogar.ocs.user.User;
 
@@ -26,6 +27,7 @@ public class SetPowerCommand extends Command {
 		if (newPower < user.getPower() || user.hasPermission(User.MAX_POWER)) {
 			targetUser.setPower(newPower);
 			user.sendMessage(chatRoom, OCSStrings.getString("command.setPower.change", targetUser.getUsername(), String.valueOf(targetUser.getPower())));
+			new Alert(Alert.INFORMATION, true, OCSStrings.getString("command.setPower.changeOwn",String.valueOf(targetUser.getPower()))).sendTo(targetUser);
 		} else {
 			user.sendMessage(chatRoom, OCSStrings.getString("command.setPower.error"));
 		}
