@@ -130,7 +130,7 @@ public class ChatRoom extends Sendable {
 			if (a.getPower() == b.getPower()) {
 				return a.getUsername().compareTo(b.getUsername());
 			} else {
-				return a.getPower() - b.getPower();
+				return b.getPower() - a.getPower();
 			}
 		});
 
