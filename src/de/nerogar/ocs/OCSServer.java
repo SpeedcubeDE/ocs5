@@ -34,6 +34,7 @@ public class OCSServer {
 	public static final int EXIT_RESTART = 1;
 
 	private int port;
+	public static String name;
 
 	public static final Object syncObject = new Object();
 
@@ -67,6 +68,8 @@ public class OCSServer {
 			BufferedInputStream stream = new BufferedInputStream(new FileInputStream("ocs.properties"));
 			properties.load(stream);
 			stream.close();
+
+			name = properties.getProperty("name");
 
 			onlinefilePath = properties.getProperty("onlinelist");
 			port = Integer.parseInt(properties.getProperty("port"));

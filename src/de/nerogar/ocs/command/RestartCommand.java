@@ -10,6 +10,8 @@ public class RestartCommand extends Command {
 
 	@Override
 	public boolean execute(String[] arguments, String argumentString, User user, ChatRoom chatRoom) {
+		if (arguments.length < 1) return false;
+		if (!OCSServer.name.equals(arguments[0])) return false;
 
 		new Alert(Alert.INFORMATION, true, OCSStrings.getString("system.restart")).broadcast(OCSServer.userlist);
 
@@ -34,7 +36,7 @@ public class RestartCommand extends Command {
 
 	@Override
 	public String getHelp() {
-		return "/restart";
+		return "/restart " + OCSServer.name;
 	}
 
 }
