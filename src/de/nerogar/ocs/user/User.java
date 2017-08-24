@@ -25,12 +25,11 @@ public class User extends Sendable {
 	public static final String SEE_ALL_RANKS = "seeAllRanks";
 	public static final String MODERATE_USER = "moderateUser";
 	public static final String SPAM_ALLOWED = "spamAllowed";
+	public static final String DEBUG = "debug";
 
 	public static HashMap<String, Integer> permissions;
 
 	private static DatabasePermission databasePermission;
-
-	public static final String DEF_NAME_COLOR = "000000";
 
 	private int id;
 	private Profile profile;

@@ -53,13 +53,14 @@ INSERT INTO `ocs5_command` (`name`, `minPower`) VALUES
 ('mute', 40),
 ('nameColor', 0),
 ('permission', -1),
-('profile', 40),
+('profile', 0),
 ('saveAll', -1),
 ('setPower', -1),
 ('setRank', 40),
 ('sound', 40),
 ('status', 0),
 ('stop', -1),
+('restart', -1),
 ('userpool', -1);
 
 
@@ -73,6 +74,7 @@ INSERT INTO `ocs5_config` (`name`, `value`) VALUES
 ('loginMsgLimit', 50),
 ('logoutDelay', 20000),
 ('maxCreatedParties', 1),
+('maxPartyNameLength', 255),
 ('maxPartyRounds', 100),
 ('maxScrambleCacheSize', 10),
 ('maxStatusLength', 255),
@@ -113,6 +115,7 @@ CREATE TABLE `ocs5_party` (
 
 CREATE TABLE `ocs5_partyRound` (
   `id` int AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8,
   `partyID` int,
   `round` int,
   `scramble` text,
@@ -141,6 +144,7 @@ INSERT INTO `ocs5_permission` (`name`, `minPower`) VALUES
 ('createParty', 10),
 ('createPartyWithMode', 40),
 ('createUnlimitedParties', 20),
+('debug', 100),
 ('editAllChatRooms', 40),
 ('editAllParties', 40),
 ('maxPower', 100),
