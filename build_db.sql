@@ -104,8 +104,10 @@ CREATE TABLE `ocs5_log_login` (
 
 CREATE TABLE `ocs5_party` (
   `id` int AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8,
   `ownerID` int,
   `cubeType` varchar(32),
+  `ranking` varchar(8) CHARACTER SET utf8,
   `rounds` int,
   `startTime` bigint,
   `mode` int(2),
@@ -115,7 +117,6 @@ CREATE TABLE `ocs5_party` (
 
 CREATE TABLE `ocs5_partyRound` (
   `id` int AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8,
   `partyID` int,
   `round` int,
   `scramble` text,

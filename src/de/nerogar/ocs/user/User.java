@@ -193,10 +193,7 @@ public class User extends Sendable {
 
 		//parties
 		OCSServer.partyContainer.sendTo(this);
-
-		for (Party party : OCSServer.partyContainer.getParties()) {
-			party.sendTo(this);
-		}
+		OCSServer.partyContainer.sendPartiesTo(this);
 
 		//chatrooms
 		OCSServer.chatRoomManager.sendTo(this);

@@ -126,6 +126,7 @@ public abstract class Command implements Comparable<Command> {
 		registerCommand(new CommandCommand());
 		registerCommand(new ProfileCommand());
 		registerCommand(new UserpoolCommand());
+		registerCommand(new HistoryCommand());
 
 		//build commandList
 		commandArray = new Command[commands.size()];

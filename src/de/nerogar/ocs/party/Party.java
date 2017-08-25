@@ -1,43 +1,85 @@
 package de.nerogar.ocs.party;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import de.nerogar.ocs.*;
+import de.nerogar.ocs.OCSServer;
+import de.nerogar.ocs.OCSStrings;
+import de.nerogar.ocs.Sendable;
+import de.nerogar.ocs.Userlist;
 import de.nerogar.ocs.chat.Sound;
 import de.nerogar.ocs.scramble.ScrambleProvider;
 import de.nerogar.ocs.user.User;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Party extends Sendable {
-	
+
 	private static int MAX_ID;
 
-	public static final int MODE_NORMAL = 0;
-	public static final int MODE_COMP = 1;
+	public static final int MODE_NORMAL    = 0;
+	public static final int MODE_COMP      = 1;
 	public static final int MODE_MODERATED = 2;
 
-	public int id;
+	public int    id;
 	public String name;
-	public int ownerID;
+	public int    ownerID;
 	public String scrambleType;
 	public String ranking;
-	public int rounds;
-	public long startTime;
-	public int mode;
+	public int    rounds;
+	public long   startTime;
+	public int    mode;
 
-	private Userlist userlist;
-	public PartyUserResult[] results;
-	public String[] scrambles;
-	private ScrambleProvider scrambler;
-	private long lastScrambleTime;
+	private Userlist          userlist;
+	public  PartyUserResult[] results;
+	public  String[]          scrambles;
+	private ScrambleProvider  scrambler;
+	private long              lastScrambleTime;
 
 	public int currentRound;
 
 	private boolean ended;
-	public boolean saved; //saved in the database
+	public  boolean saved; //saved in the database
+
+	/**
+	 * Creates a party by loading values from the database.
+	 * The party is assumed to have ended.
+	 *
+	 * @param id           the id of the party
+	 * @param name         the name
+	 * @param ownerID      the user id of the party creator
+	 * @param scrambleType the scramble type id
+	 * @param rounds       the number of rounds
+	 * @param startTime    the timestamp when the party was startet
+	 * @param mode         the mode of the party
+	 */
+	public Party(int id, String name, int ownerID, String scrambleType, String ranking, int rounds, long startTime, int mode) {
+		this.id = id;
+		this.name = name;
+		this.ownerID = ownerID;
+		this.scrambleType = scrambleType;
+		this.ranking = ranking;
+		this.rounds = rounds;
+		this.currentRound = rounds - 1;
+		this.startTime = startTime;
+		this.mode = mode;
+
+		this.scrambles = new String[rounds];
+
+		userlist = new Userlist();
+
+		ended = true;
+		saved = true;
+	}
+
+	/**
+	 * loads additional data into this party
+	 *
+	 * @param results the results
+	 */
+	public void loadData(PartyUserResult[] results){
+		this.results = results;
+	}
 
 	public Party(String name, int rounds, String scrambleType, String ranking, int mode, User user) {
 		id = getNewID();
@@ -49,7 +91,7 @@ public class Party extends Sendable {
 		this.mode = mode;
 
 		this.ranking = ranking;
-		
+
 		scrambler = ScrambleProvider.getScrambleProvider(scrambleType);
 	}
 
@@ -99,9 +141,9 @@ public class Party extends Sendable {
 
 	public boolean start(User user) {
 		if (hasStarted()) return false;
-		Sound.PARTY_NEW_ROUND.broadcast(userlist);
 
 		if (canEdit(user)) {
+			Sound.PARTY_NEW_ROUND.broadcast(userlist);
 			results = new PartyUserResult[userlist.userCount()];
 			scrambles = new String[rounds];
 			startTime = OCSServer.getTimestamp();
@@ -186,8 +228,10 @@ public class Party extends Sendable {
 				//OCSServer.userPool.setProfileDirty(user.id);
 			}
 
+			close();
+			OCSServer.partyContainer.broadcast(OCSServer.userlist);
 			OCSServer.databaseParty.saveParty(this);
-			OCSServer.partyContainer.removeParty(id, null);
+			//OCSServer.partyContainer.removeParty(id, null);
 		} else {
 			currentRound++;
 			genScramble(currentRound);
@@ -224,6 +268,7 @@ public class Party extends Sendable {
 	}
 
 	public void close() {
+		if (ended) return;
 		ended = true;
 		broadcast(OCSServer.userlist);
 	}

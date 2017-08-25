@@ -3,19 +3,24 @@ package de.nerogar.ocs.party;
 import java.util.ArrayList;
 
 public class PartyUserResult implements Comparable<PartyUserResult> {
+
 	public static final int DNF = -1;
 	public static final int DNS = -2;
 
-	public int[] times;
+	public static final String AVG  = "avg";
+	public static final String MEAN = "mean";
+	public static final String BEST = "best";
+
+	public int[]     times;
 	public boolean[] timeSet;
-	public int userID;
-	public boolean ended;
+	public int       userID;
+	public boolean   ended;
 
 	private String ranking;
-	public int avg;
-	public int mean;
-	public int best;
-	public int worst;
+	public  int    avg;
+	public  int    mean;
+	public  int    best;
+	public  int    worst;
 
 	public ArrayList<Average> averages;
 
@@ -138,14 +143,14 @@ public class PartyUserResult implements Comparable<PartyUserResult> {
 	@Override
 	public int compareTo(PartyUserResult pur) {
 		switch (ranking) {
-		case "avg":
-			return compare(avg, pur.avg, userID, pur.userID);
-		case "mean":
-			return compare(mean, pur.mean, userID, pur.userID);
-		case "best":
-			return compare(best, pur.best, userID, pur.userID);
-		default:
-			return 0;
+			case AVG:
+				return compare(avg, pur.avg, userID, pur.userID);
+			case MEAN:
+				return compare(mean, pur.mean, userID, pur.userID);
+			case BEST:
+				return compare(best, pur.best, userID, pur.userID);
+			default:
+				return 0;
 		}
 	}
 
