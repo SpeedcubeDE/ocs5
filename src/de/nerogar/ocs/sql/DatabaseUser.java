@@ -13,7 +13,7 @@ public class DatabaseUser extends DatabaseAdapter {
 	public int getUserIDByToken(String authToken) {
 		PreparedStatement ps = null;
 		try {
-			ps = database.getConnection().prepareStatement("SELECT id FROM " + prefix + "user WHERE loginToken = ? LIMIT 1");
+			ps = database.getConnection().prepareStatement("SELECT id FROM " + prefix + "user WHERE loginToken = ? AND loginToken <> '' LIMIT 1");
 
 			ps.setString(1, authToken);
 			ResultSet result = ps.executeQuery();
