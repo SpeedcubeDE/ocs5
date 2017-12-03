@@ -47,7 +47,7 @@ foreach ($errors as $error) {
 		</tr>
 		<tr>
 			<td>Username:</td>
-			<td><input type="text" name="username" value="<?php echo @$_POST["username"]; ?>" /></td>
+			<td><input type="text" name="username" value="<?php echo @htmlspecialchars($_POST["username"], ENT_QUOTES, 'UTF-8'); ?>" /></td>
 		</tr>
 		<tr>
 			<td>Password:</td>
@@ -59,7 +59,7 @@ foreach ($errors as $error) {
 		</tr>
 		<tr>
 			<td>E-Mail Adresse:</td>
-			<td><input type="text" name="email" value="<?php echo @$_POST["email"]; ?>" /></td>
+			<td><input type="text" name="email" value="<?php echo @htmlspecialchars($_POST["email"], ENT_QUOTES, 'UTF-8'); ?>" /></td>
 		</tr>
 		<tr>
 			<td>E-Mail Adresse (wdh.):</td>
