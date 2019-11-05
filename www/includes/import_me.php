@@ -3,7 +3,6 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set("Europe/Berlin");
-mb_internal_encoding("UTF-8");
 
 // undo PHP's magic quotes "feature"
 if (get_magic_quotes_gpc()) {
