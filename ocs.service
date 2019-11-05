@@ -1,0 +1,10 @@
+[Unit]
+Description=ocs5 server
+Requires=mysql
+
+[Service]
+ExecStart=STARTSCRIPT
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

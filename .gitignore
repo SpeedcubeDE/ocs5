@@ -1,7 +1,11 @@
 *
 !/src/**/*
 !/www/**/*
+!/server
 !.gitignore
 !*.lang
 !*.properties
 !*.sql
+!*.sh
+!*.txt
+!*.service
